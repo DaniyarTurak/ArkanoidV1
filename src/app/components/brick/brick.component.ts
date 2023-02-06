@@ -1,12 +1,4 @@
-import {
-  Component,
-  OnInit,
-  Input,
-  ElementRef,
-  ChangeDetectionStrategy,
-  Renderer2,
-  ChangeDetectorRef,
-} from '@angular/core';
+import { Component, OnInit, Input, ElementRef } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
 import {
@@ -30,11 +22,7 @@ export class BrickComponent implements OnInit {
   widthBrick: number = 80;
   heightBrick: number = 30;
 
-  constructor(
-    private store: Store,
-    private el: ElementRef,
-    private cd: ChangeDetectorRef
-  ) {}
+  constructor(private store: Store, private el: ElementRef) {}
 
   ngOnInit(): void {
     this.subscription = this.store.select(selectBall).subscribe((ball) => {

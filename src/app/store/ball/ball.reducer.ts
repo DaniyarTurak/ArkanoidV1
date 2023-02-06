@@ -28,7 +28,7 @@ export const ballReducer = createReducer(
     return { ...state, ball: { ...state.ball, dx, dy } };
   }),
   on(incrementScore, (state) => {
-    return { ...state, score: state.ball.score + 1 };
+    return { ...state, ball: { ...state.ball, score: state.ball.score + 1 } };
   }),
   on(endGame, (state) => {
     return {

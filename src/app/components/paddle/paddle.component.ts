@@ -37,8 +37,6 @@ export class PaddleComponent implements OnInit {
 
   @HostListener('document:mousemove', ['$event'])
   handleMouseMove(e: MouseEvent): void {
-    console.log('Mouse: ', e.clientX - this.paddle.Width / 2);
-    console.log(Board.WIDTH - this.paddle.Width);
     if (
       e.clientX - this.paddle.Width / 2 >= 0 &&
       e.clientX - this.paddle.Width / 2 <= Board.WIDTH - this.paddle.Width

@@ -78,34 +78,31 @@ export class BallComponent implements OnInit {
     ) {
       console.log('Game Over');
       this.resetBall(currentEl);
-    } else {
+    } else if (this.ball.isMoving) {
       if (
         ballX >= this.paddle.x - this.ball.diameter / 2 &&
         ballX <= this.paddle.x + this.paddle.Width - this.ball.diameter / 2 &&
         ballY >= this.paddle.y - this.ball.diameter &&
-        ballY <= this.paddle.y + this.paddle.Height &&
-        this.ball.isMoving
+        ballY <= this.paddle.y + this.paddle.Height
       ) {
         this.store.dispatch(
           changeDirection({ dx: this.ball.dx, dy: -this.ball.dy })
         );
       }
 
-      if (ballY <= Board.OFFSET && this.ball.isMoving) {
+      if (ballY <= Board.OFFSET - this.ball.diameter / 2) {
         this.store.dispatch(
           changeDirection({ dx: this.ball.dx, dy: -this.ball.dy })
         );
       } else if (
-        (ballX <= this.ball.diameter / 2 ||
-          ballX >= Board.WIDTH - this.ball.diameter) &&
-        this.ball.isMoving
+        ballX <= this.ball.diameter / 2 ||
+        ballX >= Board.WIDTH - this.ball.diameter
       ) {
         this.store.dispatch(
           changeDirection({ dx: -this.ball.dx, dy: this.ball.dy })
         );
       }
 
-      this.cd.detectChanges();
       requestAnimationFrame(() => this.ballMove());
     }
   }
