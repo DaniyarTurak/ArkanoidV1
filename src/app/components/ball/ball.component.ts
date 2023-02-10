@@ -61,7 +61,7 @@ export class BallComponent implements OnInit {
   ballMove(): void {
     const currentEl = this.el.nativeElement.querySelector('.ball');
     this.progressX += 3 * this.ball.dx;
-    this.progressY += 3 * this.ball.dy;
+    this.progressY += 5.5 * this.ball.dy;
     this.renderer.setStyle(
       currentEl,
       'transform',
@@ -104,6 +104,7 @@ export class BallComponent implements OnInit {
       }
 
       requestAnimationFrame(() => this.ballMove());
+      //rx => timer
     }
   }
 
