@@ -13,18 +13,23 @@ import { IBrick } from 'src/app/types/bricks.interface';
   selector: 'mc-bricks',
   templateUrl: './bricks.component.html',
   styleUrls: ['./bricks.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  // changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BricksComponent implements OnInit {
-  allBricks: IBrick[] = [];
+  allBricks$ = [];
 
   constructor(private store: Store, private cd: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     this.store.dispatch(loadBricks());
+
     this.store.select(selectAllBricks).subscribe((bricks) => {
-      this.allBricks = bricks;
-      this.cd.detectChanges();
+      this.allBricks$ = bricks;
     });
   }
+
+  // .subscribe((bricks) => {
+  //   this.allBricks = bricks;
+  //   this.cd.detectChanges();
+  // });
 }

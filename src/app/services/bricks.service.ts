@@ -12,6 +12,8 @@ const httpOptions = {
   providedIn: 'root',
 })
 export class BricksService {
+  bricks = [];
+
   constructor(private http: HttpClient) {}
 
   getBricks(): Observable<IBrick[]> {
@@ -19,10 +21,21 @@ export class BricksService {
   }
 
   saveBricks(brick: IBrick): Observable<IBrick[]> {
+    console.log('Destroy: ', brick);
     return this.http.put<IBrick[]>(
       'http://localhost:3000/bricks/' + `${brick.id}`,
       brick,
       httpOptions
     );
+  }
+
+  setCoordinates(
+    id: number,
+    x: number,
+    y: number,
+    width: number,
+    height: number
+  ): void {
+    this.bricks[id] = { ...this.bricks[id], id, x, y, width, height };
   }
 }

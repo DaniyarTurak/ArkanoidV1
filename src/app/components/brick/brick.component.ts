@@ -1,6 +1,7 @@
 import { Component, OnInit, Input, ElementRef } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
+import { BricksService } from 'src/app/services/bricks.service';
 import {
   changeDirection,
   incrementScore,
@@ -22,42 +23,53 @@ export class BrickComponent implements OnInit {
   widthBrick: number = 80;
   heightBrick: number = 30;
 
-  constructor(private store: Store, private el: ElementRef) {}
+  constructor(
+    private store: Store,
+    private el: ElementRef,
+    private brickService: BricksService
+  ) {}
 
   ngOnInit(): void {
-    this.subscription = this.store.select(selectBall).subscribe((ball) => {
-      this.ball = ball;
-      const { x: brickX, y: brickY } =
-        this.el.nativeElement.getBoundingClientRect();
-
-      if (
-        this.ball.x >= brickX &&
-        this.ball.x <= brickX + this.widthBrick - this.ball.diameter / 2 &&
-        this.ball.y >= brickY - this.ball.diameter &&
-        this.ball.y <= brickY + this.heightBrick &&
-        this.ball.isMoving &&
-        this.brick.status
-      ) {
-        this.destroyBrick();
-        this.store.dispatch(
-          changeDirection({ dx: this.ball.dx, dy: -this.ball.dy })
-        );
-      }
-
-      if (
-        this.ball.x >= brickX - this.ball.diameter &&
-        this.ball.x <= brickX + this.widthBrick &&
-        this.ball.y >= brickY - this.ball.diameter / 2 &&
-        this.ball.y <= brickY + this.ball.diameter &&
-        this.ball.isMoving &&
-        this.brick.status
-      ) {
-        this.destroyBrick();
-        this.store.dispatch(
-          changeDirection({ dx: -this.ball.dx, dy: this.ball.dy })
-        );
-      }
-    });
+    const { x: brickX, y: brickY } =
+      this.el.nativeElement.getBoundingClientRect();
+    this.brickService.setCoordinates(
+      this.brick.id,
+      brickX,
+      brickY,
+      this.widthBrick,
+      this.heightBrick
+    );
+    // this.subscription = this.store.select(selectBall).subscribe((ball) => {
+    //   this.ball = ball;
+    //   const { x: brickX, y: brickY } =
+    //     this.el.nativeElement.getBoundingClientRect();
+    //   if (
+    //     this.ball.x >= brickX &&
+    //     this.ball.x <= brickX + this.widthBrick - this.ball.diameter / 2 &&
+    //     this.ball.y >= brickY - this.ball.diameter &&
+    //     this.ball.y <= brickY + this.heightBrick &&
+    //     this.ball.isMoving &&
+    //     this.brick.status
+    //   ) {
+    //     this.destroyBrick();
+    //     this.store.dispatch(
+    //       changeDirection({ dx: this.ball.dx, dy: -this.ball.dy })
+    //     );
+    //   }
+    //   if (
+    //     this.ball.x >= brickX - this.ball.diameter &&
+    //     this.ball.x <= brickX + this.widthBrick &&
+    //     this.ball.y >= brickY - this.ball.diameter / 2 &&
+    //     this.ball.y <= brickY + this.ball.diameter &&
+    //     this.ball.isMoving &&
+    //     this.brick.status
+    //   ) {
+    //     this.destroyBrick();
+    //     this.store.dispatch(
+    //       changeDirection({ dx: -this.ball.dx, dy: this.ball.dy })
+    //     );
+    //   }
+    // });
   }
 
   destroyBrick() {

@@ -25,7 +25,11 @@ export const bricksReducer = createReducer(
     ...state,
     bricks: state.bricks.map((b) => {
       if (b.id === id) {
-        return { ...b, status: false };
+        b = { ...b, hitCount: b.hitCount - 1 };
+        if (b.hitCount === 0) {
+          return { ...b, status: false };
+        }
+        return b;
       }
       return b;
     }),

@@ -16,6 +16,7 @@ import { ballReducer } from './store/ball/ball.reducer';
 import { PaddleComponent } from './components/paddle/paddle.component';
 import { paddleReducer } from './store/paddle/paddle.reducer';
 import { ScoreBoardComponent } from './components/score-board/score-board.component';
+import { ColorChangeDirective } from './custom-directives/change-color.directive';
 
 @NgModule({
   declarations: [
@@ -25,6 +26,7 @@ import { ScoreBoardComponent } from './components/score-board/score-board.compon
     BallComponent,
     PaddleComponent,
     ScoreBoardComponent,
+    ColorChangeDirective,
   ],
   imports: [
     BrowserModule,

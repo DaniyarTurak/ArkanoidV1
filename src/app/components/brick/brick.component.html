@@ -3,4 +3,5 @@
   class="brick"
   [ngStyle]="{ width: widthBrick + 'px', height: heightBrick + 'px' }"
   [ngClass]="{ invincible: !brick.status }"
+  [ccColorChange]="brick.hitCount"
 ></div>
