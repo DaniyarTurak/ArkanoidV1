@@ -16,16 +16,16 @@ import { IBrick } from 'src/app/types/bricks.interface';
   // changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BricksComponent implements OnInit {
-  allBricks$ = [];
+  allBricks$ = this.store.select(selectAllBricks);
 
   constructor(private store: Store, private cd: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     this.store.dispatch(loadBricks());
 
-    this.store.select(selectAllBricks).subscribe((bricks) => {
-      this.allBricks$ = bricks;
-    });
+    // .subscribe((bricks) => {
+    //   this.allBricks$ = bricks;
+    // });
   }
 
   // .subscribe((bricks) => {

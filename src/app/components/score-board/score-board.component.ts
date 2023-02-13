@@ -6,8 +6,9 @@ import {
   ChangeDetectorRef,
 } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { selectBall } from 'src/app/store/ball/ball.selectors';
-import { IBall } from 'src/app/types/ball.interface';
+import { selectAllBricks } from 'src/app/store/bricks/bricks.selectors';
+import { IBrick } from 'src/app/types/bricks.interface';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'mc-score-board',
@@ -16,15 +17,19 @@ import { IBall } from 'src/app/types/ball.interface';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ScoreBoardComponent implements OnInit, OnDestroy {
-  ball: IBall;
+  bricks: IBrick[];
 
   constructor(private store: Store, private cd: ChangeDetectorRef) {}
 
   ngOnInit(): void {
-    this.store.select(selectBall).subscribe((ball) => {
-      this.ball = ball;
-      this.cd.detectChanges();
-    });
+    this.store
+      .select(selectAllBricks)
+      .pipe(map((bricks) => bricks.filter((b) => b.hitCount === 0)))
+      .subscribe((bricks) => {
+        this.bricks = bricks;
+        console.log(bricks.length);
+        this.cd.detectChanges();
+      });
   }
 
   ngOnDestroy(): void {}

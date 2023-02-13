@@ -12,6 +12,7 @@ import { Board } from 'src/app/constants/Board';
 import {
   changeDirection,
   endGame,
+  incrementScore,
   setCoordinates,
   startGame,
 } from 'src/app/store/ball/ball.actions';
@@ -79,16 +80,7 @@ export class BallComponent implements OnInit {
       console.log('Game Over');
       this.resetBall(currentEl);
     } else if (this.ball.isMoving) {
-      if (
-        ballX >= this.paddle.x - this.ball.diameter / 2 &&
-        ballX <= this.paddle.x + Paddle.Width - this.ball.diameter / 2 &&
-        ballY >= this.paddle.y - this.ball.diameter &&
-        ballY <= this.paddle.y + Paddle.Height
-      ) {
-        this.store.dispatch(
-          changeDirection({ dx: this.ball.dx, dy: -this.ball.dy })
-        );
-      }
+      this.ballPaddleCollusion();
 
       if (ballY <= Board.Offset - this.ball.diameter / 2) {
         this.store.dispatch(
@@ -103,40 +95,7 @@ export class BallComponent implements OnInit {
         );
       }
 
-      const bricks = this.brickService.bricks;
-      this.allBricks.forEach((b) => {
-        if (
-          this.ball.x >= bricks[b.id].x &&
-          this.ball.x <=
-            bricks[b.id].x + bricks[b.id].width - this.ball.diameter / 2 &&
-          this.ball.y >= bricks[b.id].y - this.ball.diameter &&
-          this.ball.y <= bricks[b.id].y + bricks[b.id].height &&
-          this.ball.isMoving &&
-          b.status
-        ) {
-          console.log('Vertical: ', b.id, b.hitCount);
-          this.store.dispatch(
-            changeDirection({ dx: this.ball.dx, dy: -this.ball.dy })
-          );
-          this.store.dispatch(destroyBrick({ id: b.id }));
-        }
-
-        if (
-          this.ball.x >= bricks[b.id].x - this.ball.diameter &&
-          this.ball.x <= bricks[b.id].x + bricks[b.id].width &&
-          this.ball.y >= bricks[b.id].y - this.ball.diameter / 2 &&
-          this.ball.y <= bricks[b.id].y + this.ball.diameter &&
-          this.ball.isMoving &&
-          b.status
-        ) {
-          console.log('Horizontal: ', b.id, b.hitCount);
-          this.store.dispatch(
-            changeDirection({ dx: -this.ball.dx, dy: this.ball.dy })
-          );
-          this.store.dispatch(destroyBrick({ id: b.id }));
-        }
-      });
-
+      this.ballBricksCollusion();
       requestAnimationFrame(() => this.ballMove());
     }
   }
@@ -158,5 +117,55 @@ export class BallComponent implements OnInit {
     this.progressY = 0;
     this.renderer.setStyle(currentEl, 'transform', `translate(0px, 0px)`);
     this.store.dispatch(endGame());
+  }
+
+  ballBricksCollusion(): void {
+    const bricks = this.brickService.bricks;
+    this.allBricks.forEach((b) => {
+      //Up down connection
+      if (
+        this.ball.x >= bricks[b.id].x &&
+        this.ball.x <=
+          bricks[b.id].x + bricks[b.id].width - this.ball.diameter / 2 &&
+        this.ball.y >= bricks[b.id].y - this.ball.diameter &&
+        this.ball.y <= bricks[b.id].y + bricks[b.id].height &&
+        this.ball.isMoving &&
+        b.status
+      ) {
+        this.store.dispatch(
+          changeDirection({ dx: this.ball.dx, dy: -this.ball.dy })
+        );
+        this.store.dispatch(incrementScore());
+        this.store.dispatch(destroyBrick({ id: b.id }));
+      }
+
+      //Left Right connection
+      if (
+        this.ball.x >= bricks[b.id].x - this.ball.diameter &&
+        this.ball.x <= bricks[b.id].x + bricks[b.id].width &&
+        this.ball.y >= bricks[b.id].y - this.ball.diameter / 2 &&
+        this.ball.y <= bricks[b.id].y + this.ball.diameter &&
+        this.ball.isMoving &&
+        b.status
+      ) {
+        this.store.dispatch(
+          changeDirection({ dx: -this.ball.dx, dy: this.ball.dy })
+        );
+        this.store.dispatch(incrementScore());
+        this.store.dispatch(destroyBrick({ id: b.id }));
+      }
+    });
+  }
+
+  ballPaddleCollusion(): void {
+    if (
+      this.ball.x >= this.paddle.x - this.ball.diameter / 2 &&
+      this.ball.x <= this.paddle.x + Paddle.Width - this.ball.diameter / 2 &&
+      this.ball.y >= this.paddle.y - this.ball.diameter
+    ) {
+      this.store.dispatch(
+        changeDirection({ dx: this.ball.dx, dy: -this.ball.dy })
+      );
+    }
   }
 }
