@@ -22,14 +22,5 @@ export class BricksComponent implements OnInit {
 
   ngOnInit(): void {
     this.store.dispatch(loadBricks());
-
-    // .subscribe((bricks) => {
-    //   this.allBricks$ = bricks;
-    // });
   }
-
-  // .subscribe((bricks) => {
-  //   this.allBricks = bricks;
-  //   this.cd.detectChanges();
-  // });
 }

@@ -27,7 +27,6 @@ export class ScoreBoardComponent implements OnInit, OnDestroy {
       .pipe(map((bricks) => bricks.filter((b) => b.hitCount === 0)))
       .subscribe((bricks) => {
         this.bricks = bricks;
-        console.log(bricks.length);
         this.cd.detectChanges();
       });
   }
