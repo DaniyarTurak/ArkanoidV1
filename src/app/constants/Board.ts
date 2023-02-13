@@ -1,5 +1,5 @@
-export enum Board {
-  WIDTH = 1500,
-  HEIGHT = 500,
-  OFFSET = 80,
-}
+export const Board = {
+  Width: 1500,
+  Height: 500,
+  Offset: 80,
+};

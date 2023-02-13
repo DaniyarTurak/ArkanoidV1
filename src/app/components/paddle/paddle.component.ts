@@ -7,11 +7,9 @@ import {
 } from '@angular/core';
 import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { Subscription } from 'rxjs';
 import { Board } from 'src/app/constants/Board';
+import { Paddle } from 'src/app/constants/Paddle';
 import { setPaddleCoordinates } from 'src/app/store/paddle/paddle.actions';
-import { selectPaddle } from 'src/app/store/paddle/paddle.selectors';
-import { IPaddle } from 'src/app/types/paddle.interface';
 
 @Component({
   selector: 'mc-paddle',
@@ -20,8 +18,7 @@ import { IPaddle } from 'src/app/types/paddle.interface';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PaddleComponent implements OnInit {
-  paddle: IPaddle;
-
+  Paddle = Paddle;
   constructor(
     private store: Store,
     private renderer: Renderer2,
@@ -29,23 +26,19 @@ export class PaddleComponent implements OnInit {
     private cd: ChangeDetectorRef
   ) {}
 
-  ngOnInit(): void {
-    this.store
-      .select(selectPaddle)
-      .subscribe((paddle) => (this.paddle = paddle));
-  }
+  ngOnInit(): void {}
 
   @HostListener('document:mousemove', ['$event'])
   handleMouseMove(e: MouseEvent): void {
     if (
-      e.clientX - this.paddle.Width / 2 >= 0 &&
-      e.clientX - this.paddle.Width / 2 <= Board.WIDTH - this.paddle.Width
+      e.clientX - Paddle.Width / 2 >= 0 &&
+      e.clientX - Paddle.Width / 2 <= Board.Width - Paddle.Width
     ) {
       const paddle = this.el.nativeElement.querySelector('.paddle');
       this.renderer.setStyle(
         paddle,
         'transform',
-        `translateX(${e.clientX - this.paddle.Width / 2}px)`
+        `translateX(${e.clientX - Paddle.Width / 2}px)`
       );
       const { x, y } = paddle.getBoundingClientRect();
       this.store.dispatch(setPaddleCoordinates({ x, y }));

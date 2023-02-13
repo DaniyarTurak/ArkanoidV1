@@ -7,7 +7,7 @@ export interface PaddleState {
 }
 
 export const initialState: PaddleState = {
-  paddle: { x: 0, y: 0, Width: 200, Height: 30 },
+  paddle: { x: 0, y: 0 },
 };
 
 export const paddleReducer = createReducer(
