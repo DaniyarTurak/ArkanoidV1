@@ -23,17 +23,17 @@
     {
       "id": 4,
       "status": true,
-      "hitCount": 3
-    },
-    {
-      "id": 5,
-      "status": true,
       "hitCount": 2
     },
     {
+      "id": 5,
+      "status": false,
+      "hitCount": 0
+    },
+    {
       "id": 6,
-      "status": true,
-      "hitCount": 3
+      "status": false,
+      "hitCount": 0
     },
     {
       "id": 7,
@@ -58,7 +58,7 @@
     {
       "id": 11,
       "status": true,
-      "hitCount": 3
+      "hitCount": 2
     }
   ]
 }

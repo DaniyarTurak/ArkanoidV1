@@ -38,7 +38,7 @@ export const ballReducer = createReducer(
         x: 0,
         y: 0,
         dx: 1,
-        dy: 1,
+        dy: -1,
         isMoving: false,
         score: 0,
       },

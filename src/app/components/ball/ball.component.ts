@@ -25,6 +25,7 @@ import { Paddle } from 'src/app/constants/Paddle';
 import { BricksService } from 'src/app/services/bricks.service';
 import { destroyBrick } from 'src/app/store/bricks/bricks.actions';
 import { IBrick } from 'src/app/types/bricks.interface';
+import { BallService } from 'src/app/services/ball.service';
 
 @Component({
   selector: 'mc-ball',
@@ -44,7 +45,8 @@ export class BallComponent implements OnInit {
     private el: ElementRef,
     private store: Store,
     private cd: ChangeDetectorRef,
-    private brickService: BricksService
+    private brickService: BricksService,
+    private ballService: BallService
   ) {}
 
   ngOnInit(): void {
@@ -76,7 +78,7 @@ export class BallComponent implements OnInit {
       Board.Height + Board.Offset - this.ball.diameter //||  this.ball.score == this.bricksLength
     ) {
       console.log('Game Over');
-      this.resetBall(currentEl);
+      this.resetBall();
     } else if (this.ball.isMoving) {
       this.ballPaddleCollusion();
 
@@ -94,7 +96,7 @@ export class BallComponent implements OnInit {
       }
 
       this.ballBricksCollusion();
-      requestAnimationFrame(() => this.ballMove());
+      //requestAnimationFrame(() => this.ballMove());
     }
   }
 
@@ -102,19 +104,27 @@ export class BallComponent implements OnInit {
   handleKeyboardEvent(e: KeyboardEvent) {
     if (e.code == 'Enter') {
       this.store.dispatch(startGame());
-      this.ballMove();
+      this.ballService.startGame(() => this.ballMove());
     } else if (e.code == 'Space') {
-      this.store.dispatch(
-        changeDirection({ dx: this.ball.dx, dy: -this.ball.dy })
-      );
+      this.ballService.stopGame();
     }
   }
 
-  resetBall(currentEl: HTMLElement) {
+  resetBall() {
     this.progressX = 0;
     this.progressY = 0;
-    this.renderer.setStyle(currentEl, 'transform', `translate(0px, 0px)`);
+    this.renderer.setStyle(
+      this.el.nativeElement.querySelector('.ball'),
+      'transform',
+      `translate(0px, 0px)`
+    );
+    this.renderer.setStyle(
+      this.el.nativeElement.parentNode.querySelector('.paddle'),
+      'transform',
+      `translateX(0px)`
+    );
     this.store.dispatch(endGame());
+    this.ballService.stopGame();
   }
 
   ballBricksCollusion(): void {
