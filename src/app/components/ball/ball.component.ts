@@ -48,8 +48,6 @@ export class BallComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.store.dispatch(startGame());
-
     this.store
       .select(selectAllBricks)
       .subscribe((bricks) => (this.allBricks = bricks));
@@ -167,5 +165,14 @@ export class BallComponent implements OnInit {
         changeDirection({ dx: this.ball.dx, dy: -this.ball.dy })
       );
     }
+    // if (
+    //   this.ball.x >= this.paddle.x - this.ball.diameter / 2 &&
+    //   this.ball.x <= this.paddle.x + Paddle.Width - this.ball.diameter / 2 &&
+    //   this.ball.y >= this.paddle.y - this.ball.diameter
+    // ) {
+    //   this.store.dispatch(
+    //     changeDirection({ dx: this.ball.dx, dy: -this.ball.dy })
+    //   );
+    // }
   }
 }

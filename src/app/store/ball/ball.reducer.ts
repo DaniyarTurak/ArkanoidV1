@@ -13,7 +13,7 @@ export interface BallState {
 }
 
 export const initialState: BallState = {
-  ball: { x: 0, y: 0, dx: 1, dy: 1, isMoving: false, diameter: 15, score: 0 },
+  ball: { x: 0, y: 0, dx: 1, dy: -1, isMoving: false, diameter: 15, score: 0 },
 };
 
 export const ballReducer = createReducer(
