@@ -37,6 +37,7 @@ export class PaddleComponent implements OnInit {
 
   @HostListener('document:mousemove', ['$event'])
   handleMouseMove(e: MouseEvent): void {
+    //Before game
     if (
       e.clientX - Paddle.Width / 2 >= 0 &&
       e.clientX - Paddle.Width / 2 <= Board.Width - Paddle.Width &&
@@ -55,9 +56,8 @@ export class PaddleComponent implements OnInit {
         `translateX(${e.clientX - Paddle.Width / 2}px)`
       );
       this.cd.detectChanges();
-    }
-
-    if (
+    } //start game
+    else if (
       e.clientX - Paddle.Width / 2 >= 0 &&
       e.clientX - Paddle.Width / 2 <= Board.Width - Paddle.Width &&
       this.ball.isMoving

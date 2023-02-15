@@ -40,6 +40,8 @@ export class BallComponent implements OnInit {
   ball: IBall;
   paddle: IPaddle;
   allBricks: IBrick[];
+  bricks = [];
+  stopFlag: boolean = false;
 
   constructor(
     private renderer: Renderer2,
@@ -51,14 +53,29 @@ export class BallComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // this.store.select(selectAllBricks).subscribe((bricks) => (this.allBricks = bricks));
     this.store.select(selectBall).subscribe((ball) => (this.ball = ball));
     this.store
       .select(selectPaddle)
       .subscribe((paddle) => (this.paddle = paddle));
   }
 
+  @HostListener('document:keydown', ['$event'])
+  handleKeyboardEvent(e: KeyboardEvent) {
+    if (e.code == 'Enter') {
+      this.store.dispatch(startGame());
+      this.ballMove();
+      this.ballService.startGame(() => this.ballMove());
+    } else if (e.code == 'Space') {
+      this.store.dispatch(
+        changeDirection({ dx: -this.ball.dx, dy: -this.ball.dy })
+      );
+    }
+  }
+
   ballMove(): void {
+    this.bricks = this.brickService.bricks;
+    console.log('Moving: ', this.ball.isMoving);
+
     const currentEl = this.el.nativeElement.querySelector('.ball');
     this.progressX += 3 * this.ball.dx;
     this.progressY += 5.5 * this.ball.dy;
@@ -67,18 +84,17 @@ export class BallComponent implements OnInit {
       'transform',
       `translate(${this.progressX}px, ${this.progressY}px)`
     );
+
     const { x: ballX, y: ballY } = currentEl.getBoundingClientRect();
     this.store.dispatch(setCoordinates({ x: ballX, y: ballY }));
-    // console.log('Ball: ', this.ball);
-    // console.log('Paddle: ', this.paddle);
 
     if (
-      ballY >=
-      Board.Height + Board.Offset - this.ball.diameter //||  this.ball.score == this.bricksLength
+      ballY >= Board.Height + Board.Offset - this.ball.diameter ||
+      !this.ball.isMoving
     ) {
       console.log('Game Over');
       this.resetBall();
-    } else if (this.ball.isMoving) {
+    } else {
       this.ballPaddleCollusion();
 
       if (ballY <= Board.Offset + this.ball.diameter / 2) {
@@ -96,19 +112,6 @@ export class BallComponent implements OnInit {
 
       this.ballBricksCollusion();
       //requestAnimationFrame(() => this.ballMove());
-    }
-  }
-
-  @HostListener('document:keydown', ['$event'])
-  handleKeyboardEvent(e: KeyboardEvent) {
-    if (e.code == 'Enter') {
-      this.store.dispatch(startGame());
-      this.ballMove();
-      this.ballService.startGame(() => this.ballMove());
-    } else if (e.code == 'Space') {
-      this.store.dispatch(
-        changeDirection({ dx: -this.ball.dx, dy: -this.ball.dy })
-      );
     }
   }
 
@@ -130,33 +133,30 @@ export class BallComponent implements OnInit {
   }
 
   ballBricksCollusion(): void {
-    const bricks = this.brickService.bricks;
-    bricks.forEach((b) => {
+    this.bricks.forEach((b) => {
       if (
         this.ball.x >= b.x - this.ball.diameter &&
         this.ball.x <= b.x + Brick.Width &&
         this.ball.y >= b.y - this.ball.diameter / 2 &&
         this.ball.y <= b.y + Brick.Height - this.ball.diameter / 2 &&
-        this.ball.isMoving
+        b.status
       ) {
-        console.log('Connected LeftRight');
+        //console.log('Connected LeftRight');
         this.store.dispatch(
           changeDirection({ dx: -this.ball.dx, dy: this.ball.dy })
         );
-        this.store.dispatch(incrementScore());
         this.store.dispatch(destroyBrick({ id: b.id }));
       } else if (
         this.ball.x >= b.x - this.ball.diameter / 2 &&
         this.ball.x <= b.x + Brick.Width - this.ball.diameter &&
         this.ball.y >= b.y &&
         this.ball.y <= b.y + Brick.Height + this.ball.diameter / 2 &&
-        this.ball.isMoving
+        b.status
       ) {
-        console.log('Connected UpDown');
+        //console.log('Connected UpDown');
         this.store.dispatch(
           changeDirection({ dx: this.ball.dx, dy: -this.ball.dy })
         );
-        this.store.dispatch(incrementScore());
         this.store.dispatch(destroyBrick({ id: b.id }));
       }
     });
@@ -172,14 +172,5 @@ export class BallComponent implements OnInit {
         changeDirection({ dx: this.ball.dx, dy: -this.ball.dy })
       );
     }
-    // if (
-    //   this.ball.x >= this.paddle.x - this.ball.diameter / 2 &&
-    //   this.ball.x <= this.paddle.x + Paddle.Width - this.ball.diameter / 2 &&
-    //   this.ball.y >= this.paddle.y - this.ball.diameter
-    // ) {
-    //   this.store.dispatch(
-    //     changeDirection({ dx: this.ball.dx, dy: -this.ball.dy })
-    //   );
-    // }
   }
 }

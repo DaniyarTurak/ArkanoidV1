@@ -9,5 +9,10 @@ export const selectAllBricks = createSelector(
   (state: BricksState) => state.bricks
 );
 
+export const selectScoreBricks = createSelector(
+  selectBricks,
+  (state: BricksState) => state.bricks.filter((b) => b.status)
+);
+
 // export const selectSingleBrick = (id: number) =>
 //   createSelector(selectBricks, (state: BricksState) => state.bricks[id - 1]);

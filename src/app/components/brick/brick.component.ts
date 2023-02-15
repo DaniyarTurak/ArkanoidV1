@@ -1,7 +1,14 @@
 import { Component, OnInit, Input, ElementRef } from '@angular/core';
+import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
 import { Brick } from 'src/app/constants/Brick';
 import { BricksService } from 'src/app/services/bricks.service';
+import {
+  changeDirection,
+  incrementScore,
+} from 'src/app/store/ball/ball.actions';
+import { selectBall } from 'src/app/store/ball/ball.selectors';
+import { destroyBrick } from 'src/app/store/bricks/bricks.actions';
 import { IBall } from 'src/app/types/ball.interface';
 import { IBrick } from 'src/app/types/bricks.interface';
 

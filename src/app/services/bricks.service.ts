@@ -30,6 +30,6 @@ export class BricksService {
   }
 
   setCoordinates(id: number, x: number, y: number, status: boolean): void {
-    if (status) this.bricks.push({ id, x, y });
+    this.bricks[id] = { ...this.bricks[id], id, x, y, status };
   }
 }
