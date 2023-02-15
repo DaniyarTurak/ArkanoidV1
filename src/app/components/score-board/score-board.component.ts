@@ -9,6 +9,7 @@ import { Store } from '@ngrx/store';
 import { selectAllBricks } from 'src/app/store/bricks/bricks.selectors';
 import { IBrick } from 'src/app/types/bricks.interface';
 import { map } from 'rxjs/operators';
+import { BricksService } from 'src/app/services/bricks.service';
 
 @Component({
   selector: 'mc-score-board',
@@ -19,16 +20,17 @@ import { map } from 'rxjs/operators';
 export class ScoreBoardComponent implements OnInit, OnDestroy {
   bricks: IBrick[];
 
-  constructor(private store: Store, private cd: ChangeDetectorRef) {}
+  constructor(
+    private store: Store,
+    private cd: ChangeDetectorRef,
+    private brickService: BricksService
+  ) {}
 
   ngOnInit(): void {
-    this.store
-      .select(selectAllBricks)
-      .pipe(map((bricks) => bricks.filter((b) => b.hitCount === 0)))
-      .subscribe((bricks) => {
-        this.bricks = bricks;
-        this.cd.detectChanges();
-      });
+    this.store.select(selectAllBricks).subscribe((data) => {
+      this.bricks = this.brickService.bricks;
+      this.cd.detectChanges();
+    });
   }
 
   ngOnDestroy(): void {}

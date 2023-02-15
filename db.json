@@ -1,64 +1,64 @@
 {
   "bricks": [
     {
-      "id": 3,
+      "id": 0,
       "status": true,
       "hitCount": 3
     },
     {
-      "id": 3,
+      "id": 1,
       "status": true,
-      "hitCount": 2
+      "hitCount": 3
     },
     {
       "id": 2,
-      "status": true,
-      "hitCount": 3
+      "status": false,
+      "hitCount": 2
     },
     {
       "id": 3,
-      "status": true,
-      "hitCount": 3
+      "status": false,
+      "hitCount": 2
     },
     {
       "id": 4,
-      "status": true,
-      "hitCount": 2
+      "status": false,
+      "hitCount": 1
     },
     {
       "id": 5,
       "status": false,
-      "hitCount": 0
+      "hitCount": 3
     },
     {
       "id": 6,
       "status": false,
-      "hitCount": 0
+      "hitCount": 2
     },
     {
       "id": 7,
-      "status": true,
+      "status": false,
       "hitCount": 2
     },
     {
       "id": 8,
-      "status": true,
-      "hitCount": 3
+      "status": false,
+      "hitCount": 1
     },
     {
       "id": 9,
-      "status": true,
+      "status": false,
       "hitCount": 2
     },
     {
       "id": 10,
-      "status": true,
+      "status": false,
       "hitCount": 3
     },
     {
       "id": 11,
-      "status": true,
-      "hitCount": 2
+      "status": false,
+      "hitCount": 3
     }
   ]
 }

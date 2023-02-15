@@ -1,7 +1,7 @@
 <!-- [ngClass]="{ invincible: !brick.status }" -->
 <div
   class="brick"
-  [ngStyle]="{ width: widthBrick + 'px', height: heightBrick + 'px' }"
+  [ngStyle]="{ width: Brick.Width + 'px', height: Brick.Height + 'px' }"
   [ngClass]="{ invincible: !brick.status }"
   [ccColorChange]="brick.hitCount"
 ></div>

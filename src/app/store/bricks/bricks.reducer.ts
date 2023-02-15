@@ -24,23 +24,25 @@ export const bricksReducer = createReducer(
   on(destroyBrick, (state, { id }) => ({
     ...state,
     bricks: state.bricks.map((b) => {
-      if (b.id === id) {
-        b = { ...b, hitCount: b.hitCount - 1 };
-        if (b.hitCount === 0) {
-          return { ...b, status: false };
+      if (b.id === id && b.status) {
+        console.log('This id connected: ', id);
+        if (b.hitCount <= 1) {
+          return { ...b, status: false, hitCount: b.hitCount - 1 };
         }
-        return b;
+        return { ...b, hitCount: b.hitCount - 1 };
       }
       return b;
     }),
   })),
   on(loadBricks, (state) => ({ ...state, status: 'loading' })),
-  on(loadBricksSuccess, (state, { bricks }) => ({
-    ...state,
-    bricks,
-    error: '',
-    status: 'success',
-  })),
+  on(loadBricksSuccess, (state, { bricks }) => {
+    return {
+      ...state,
+      bricks,
+      error: '',
+      status: 'success',
+    };
+  }),
   on(loadBricksFailure, (state, { error }) => ({
     ...state,
     error,

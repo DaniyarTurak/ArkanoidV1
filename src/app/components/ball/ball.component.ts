@@ -26,6 +26,7 @@ import { BricksService } from 'src/app/services/bricks.service';
 import { destroyBrick } from 'src/app/store/bricks/bricks.actions';
 import { IBrick } from 'src/app/types/bricks.interface';
 import { BallService } from 'src/app/services/ball.service';
+import { Brick } from 'src/app/constants/Brick';
 
 @Component({
   selector: 'mc-ball',
@@ -50,9 +51,7 @@ export class BallComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.store
-      .select(selectAllBricks)
-      .subscribe((bricks) => (this.allBricks = bricks));
+    // this.store.select(selectAllBricks).subscribe((bricks) => (this.allBricks = bricks));
     this.store.select(selectBall).subscribe((ball) => (this.ball = ball));
     this.store
       .select(selectPaddle)
@@ -82,7 +81,7 @@ export class BallComponent implements OnInit {
     } else if (this.ball.isMoving) {
       this.ballPaddleCollusion();
 
-      if (ballY <= Board.Offset - this.ball.diameter / 2) {
+      if (ballY <= Board.Offset + this.ball.diameter / 2) {
         this.store.dispatch(
           changeDirection({ dx: this.ball.dx, dy: -this.ball.dy })
         );
@@ -104,9 +103,12 @@ export class BallComponent implements OnInit {
   handleKeyboardEvent(e: KeyboardEvent) {
     if (e.code == 'Enter') {
       this.store.dispatch(startGame());
+      this.ballMove();
       this.ballService.startGame(() => this.ballMove());
     } else if (e.code == 'Space') {
-      this.ballService.stopGame();
+      this.store.dispatch(
+        changeDirection({ dx: -this.ball.dx, dy: -this.ball.dy })
+      );
     }
   }
 
@@ -129,35 +131,30 @@ export class BallComponent implements OnInit {
 
   ballBricksCollusion(): void {
     const bricks = this.brickService.bricks;
-    this.allBricks.forEach((b) => {
-      //Up down connection
+    bricks.forEach((b) => {
       if (
-        this.ball.x >= bricks[b.id].x &&
-        this.ball.x <=
-          bricks[b.id].x + bricks[b.id].width - this.ball.diameter / 2 &&
-        this.ball.y >= bricks[b.id].y - this.ball.diameter &&
-        this.ball.y <= bricks[b.id].y + bricks[b.id].height &&
-        this.ball.isMoving &&
-        b.status
+        this.ball.x >= b.x - this.ball.diameter &&
+        this.ball.x <= b.x + Brick.Width &&
+        this.ball.y >= b.y - this.ball.diameter / 2 &&
+        this.ball.y <= b.y + Brick.Height - this.ball.diameter / 2 &&
+        this.ball.isMoving
       ) {
+        console.log('Connected LeftRight');
         this.store.dispatch(
-          changeDirection({ dx: this.ball.dx, dy: -this.ball.dy })
+          changeDirection({ dx: -this.ball.dx, dy: this.ball.dy })
         );
         this.store.dispatch(incrementScore());
         this.store.dispatch(destroyBrick({ id: b.id }));
-      }
-
-      //Left Right connection
-      if (
-        this.ball.x >= bricks[b.id].x - this.ball.diameter &&
-        this.ball.x <= bricks[b.id].x + bricks[b.id].width &&
-        this.ball.y >= bricks[b.id].y - this.ball.diameter / 2 &&
-        this.ball.y <= bricks[b.id].y + this.ball.diameter &&
-        this.ball.isMoving &&
-        b.status
+      } else if (
+        this.ball.x >= b.x - this.ball.diameter / 2 &&
+        this.ball.x <= b.x + Brick.Width - this.ball.diameter &&
+        this.ball.y >= b.y &&
+        this.ball.y <= b.y + Brick.Height + this.ball.diameter / 2 &&
+        this.ball.isMoving
       ) {
+        console.log('Connected UpDown');
         this.store.dispatch(
-          changeDirection({ dx: -this.ball.dx, dy: this.ball.dy })
+          changeDirection({ dx: this.ball.dx, dy: -this.ball.dy })
         );
         this.store.dispatch(incrementScore());
         this.store.dispatch(destroyBrick({ id: b.id }));

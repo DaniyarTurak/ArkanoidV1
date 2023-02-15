@@ -1,5 +1,6 @@
 import { Component, OnInit, Input, ElementRef } from '@angular/core';
 import { Subscription } from 'rxjs';
+import { Brick } from 'src/app/constants/Brick';
 import { BricksService } from 'src/app/services/bricks.service';
 import { IBall } from 'src/app/types/ball.interface';
 import { IBrick } from 'src/app/types/bricks.interface';
@@ -13,8 +14,7 @@ export class BrickComponent implements OnInit {
   @Input() brick: IBrick;
   ball: IBall;
   subscription: Subscription;
-  widthBrick: number = 80;
-  heightBrick: number = 30;
+  Brick = Brick;
 
   constructor(private el: ElementRef, private brickService: BricksService) {}
 
@@ -25,8 +25,7 @@ export class BrickComponent implements OnInit {
       this.brick.id,
       brickX,
       brickY,
-      this.widthBrick,
-      this.heightBrick
+      this.brick.status
     );
   }
 }

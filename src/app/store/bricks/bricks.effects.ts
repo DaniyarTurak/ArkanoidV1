@@ -3,7 +3,13 @@ import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { AppState } from '../app.state';
 import { of, from } from 'rxjs';
-import { switchMap, map, catchError, withLatestFrom } from 'rxjs/operators';
+import {
+  switchMap,
+  map,
+  catchError,
+  withLatestFrom,
+  filter,
+} from 'rxjs/operators';
 import { selectAllBricks } from './bricks.selectors';
 import {
   destroyBrick,
