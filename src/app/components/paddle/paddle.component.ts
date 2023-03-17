@@ -71,6 +71,24 @@ export class PaddleComponent implements OnInit {
       const { x, y } = paddle.getBoundingClientRect();
       this.store.dispatch(setPaddleCoordinates({ x, y }));
       this.cd.detectChanges();
+
+      if (e.movementX >= 1) {
+        Paddle.direction = 'right';
+
+        if (e.movementX >= 10) {
+          Paddle.speedBoost = 2;
+        } else {
+          Paddle.speedBoost = 0;
+        }
+      } else if (e.movementX <= -1) {
+        Paddle.direction = 'left';
+
+        if (e.movementX <= -10) {
+          Paddle.speedBoost = 2;
+        } else {
+          Paddle.speedBoost = 0;
+        }
+      }
     }
   }
 }

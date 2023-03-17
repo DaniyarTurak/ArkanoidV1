@@ -10,7 +10,9 @@ export class BallService {
 
   //.pipe(takeUntil(timer(3000)))
   startGame(ballMove: Function) {
-    this._subsciption = interval(17).subscribe((time) => {
+    let oneSecond = 1000; //ms
+    let frames = 60; //browser frame equals to 60
+    this._subsciption = interval(oneSecond / frames).subscribe((time) => {
       ballMove();
     });
   }

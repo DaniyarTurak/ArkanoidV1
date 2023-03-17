@@ -27,6 +27,7 @@ import { destroyBrick } from 'src/app/store/bricks/bricks.actions';
 import { IBrick } from 'src/app/types/bricks.interface';
 import { BallService } from 'src/app/services/ball.service';
 import { Brick } from 'src/app/constants/Brick';
+import { Ball, StrongBall } from 'src/app/Ball';
 
 @Component({
   selector: 'mc-ball',
@@ -37,11 +38,16 @@ import { Brick } from 'src/app/constants/Brick';
 export class BallComponent implements OnInit {
   progressX: number = 0;
   progressY: number = 0;
+  angleX: number = 3.5;
+  angleY: number = 5;
   ball: IBall;
   paddle: IPaddle;
   allBricks: IBrick[];
   bricks = [];
   stopFlag: boolean = false;
+
+  powerfullMode = false;
+  speedMode = false;
 
   constructor(
     private renderer: Renderer2,
@@ -59,26 +65,40 @@ export class BallComponent implements OnInit {
       .subscribe((paddle) => (this.paddle = paddle));
   }
 
-  @HostListener('document:keydown', ['$event'])
+  @HostListener('document:keydown', ['$event']) //todo: add Keyboard control
   handleKeyboardEvent(e: KeyboardEvent) {
     if (e.code == 'Enter') {
       this.store.dispatch(startGame());
       this.ballMove();
       this.ballService.startGame(() => this.ballMove());
     } else if (e.code == 'Space') {
-      this.store.dispatch(
-        changeDirection({ dx: -this.ball.dx, dy: -this.ball.dy })
-      );
+      // this.powerfullMode = true;
+      // setTimeout(() => {
+      //   this.powerfullMode = false;
+      // }, 3000);
+
+      this.speedMode = true;
+      this.angleX += 5;
+      this.angleY += 5;
+      setTimeout(() => {
+        this.speedMode = false;
+        this.angleX -= 5;
+        this.angleY -= 5;
+      }, 3000);
+
+      // this.store.dispatch(
+      //   changeDirection({ dx: -this.ball.dx, dy: -this.ball.dy })
+      // );
     }
   }
 
   ballMove(): void {
+    //todo: add bonus drop
     this.bricks = this.brickService.bricks;
-    console.log('Moving: ', this.ball.isMoving);
 
     const currentEl = this.el.nativeElement.querySelector('.ball');
-    this.progressX += 3 * this.ball.dx;
-    this.progressY += 5.5 * this.ball.dy;
+    this.progressX += this.angleX * this.ball.dx; // todo: добавить угол
+    this.progressY += this.angleY * this.ball.dy;
     this.renderer.setStyle(
       currentEl,
       'transform',
@@ -110,7 +130,7 @@ export class BallComponent implements OnInit {
         );
       }
 
-      this.ballBricksCollusion();
+      this.ballBricksCollusion(); //todo: после destroy он проходит а не отскачивает
       //requestAnimationFrame(() => this.ballMove());
     }
   }
@@ -118,6 +138,8 @@ export class BallComponent implements OnInit {
   resetBall() {
     this.progressX = 0;
     this.progressY = 0;
+    this.angleX = 3.5;
+    this.angleY = 5;
     this.renderer.setStyle(
       this.el.nativeElement.querySelector('.ball'),
       'transform',
@@ -141,10 +163,12 @@ export class BallComponent implements OnInit {
         this.ball.y <= b.y + Brick.Height - this.ball.diameter / 2 &&
         b.status
       ) {
+        if (!this.powerfullMode)
+          this.store.dispatch(
+            changeDirection({ dx: -this.ball.dx, dy: this.ball.dy })
+          );
         //console.log('Connected LeftRight');
-        this.store.dispatch(
-          changeDirection({ dx: -this.ball.dx, dy: this.ball.dy })
-        );
+
         this.store.dispatch(destroyBrick({ id: b.id }));
       } else if (
         this.ball.x >= b.x - this.ball.diameter / 2 &&
@@ -154,23 +178,59 @@ export class BallComponent implements OnInit {
         b.status
       ) {
         //console.log('Connected UpDown');
-        this.store.dispatch(
-          changeDirection({ dx: this.ball.dx, dy: -this.ball.dy })
-        );
+        if (!this.powerfullMode)
+          this.store.dispatch(
+            changeDirection({ dx: this.ball.dx, dy: -this.ball.dy })
+          );
+
         this.store.dispatch(destroyBrick({ id: b.id }));
       }
     });
   }
 
   ballPaddleCollusion(): void {
+    //todo: динамическая управления шариком
     if (
+      this.ball.x >= this.paddle.x - this.ball.diameter &&
+      this.ball.x <= this.paddle.x + Brick.Width &&
+      this.ball.y >= this.paddle.y - this.ball.diameter / 2 &&
+      this.ball.y <= this.paddle.y + Brick.Height - this.ball.diameter / 2
+    ) {
+      this.angleX = 5.5;
+      this.store.dispatch(
+        changeDirection({ dx: -this.ball.dx, dy: -this.ball.dy })
+      );
+    } else if (
       this.ball.x >= this.paddle.x - this.ball.diameter / 2 &&
       this.ball.x <= this.paddle.x + Paddle.Width - this.ball.diameter / 2 &&
-      this.ball.y >= this.paddle.y - this.ball.diameter
+      this.ball.y >= this.paddle.y - this.ball.diameter / 2
     ) {
+      if (this.angleX >= 3.5) {
+        this.angleX = 1.5;
+      }
+
       this.store.dispatch(
         changeDirection({ dx: this.ball.dx, dy: -this.ball.dy })
       );
+
+      if (Paddle.direction == 'right') {
+        if (this.ball.dx < 0) {
+          this.store.dispatch(
+            changeDirection({ dx: -this.ball.dx, dy: -this.ball.dy })
+          );
+        }
+        this.angleX += Paddle.speedBoost;
+        this.angleY += Paddle.speedBoost;
+      } else if (Paddle.direction == 'left') {
+        if (this.ball.dx > 0) {
+          this.store.dispatch(
+            changeDirection({ dx: -this.ball.dx, dy: -this.ball.dy })
+          );
+        }
+
+        this.angleX += Paddle.speedBoost;
+        this.angleY += Paddle.speedBoost;
+      }
     }
   }
 }

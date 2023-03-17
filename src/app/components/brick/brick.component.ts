@@ -28,11 +28,13 @@ export class BrickComponent implements OnInit {
   ngOnInit(): void {
     const { x: brickX, y: brickY } =
       this.el.nativeElement.getBoundingClientRect();
+
     this.brickService.setCoordinates(
       this.brick.id,
       brickX,
       brickY,
-      this.brick.status
+      this.brick.status,
+      this.brick.hitCount
     );
   }
 }

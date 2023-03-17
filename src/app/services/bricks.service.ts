@@ -29,7 +29,13 @@ export class BricksService {
     );
   }
 
-  setCoordinates(id: number, x: number, y: number, status: boolean): void {
-    this.bricks[id] = { ...this.bricks[id], id, x, y, status };
+  setCoordinates(
+    id: number,
+    x: number,
+    y: number,
+    status: boolean,
+    hitCount: number
+  ): void {
+    this.bricks[id] = { ...this.bricks[id], id, x, y, hitCount, status };
   }
 }

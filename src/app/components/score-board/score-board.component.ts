@@ -32,7 +32,6 @@ export class ScoreBoardComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.store.select(selectScoreBricks).subscribe((bricks) => {
-      //console.log('score: ', this.score);
       if (this.prevBricks.length !== 0) {
         this.score = Math.abs(bricks.length - this.prevBricks.length);
         if (bricks.length == 0) {
